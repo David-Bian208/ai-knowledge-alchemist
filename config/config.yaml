@@ -1,0 +1,46 @@
+# 知识炼金术Agent V1.0 配置文件
+# LLM配置
+llm:
+  cheap_model: "deepseek-chat"
+  pro_model: "deepseek-chat"  # V1.0先用同一个模型，后续可切换
+  temperature: 0.1
+  timeout: 60
+  base_url: "https://api.deepseek.com"
+
+# 提示词文件路径
+prompts:
+  classification: "prompts/classification.txt"
+  scoring: "prompts/scoring.txt"
+  extraction: "prompts/extraction.txt"
+
+# 分类选项（严格对齐开发手册，不要修改）
+classification_options:
+  content_dimension: ["方法论", "认知", "案例", "数据", "软件工具", "资源"]
+  scene_dimension: ["脚本素材", "竞品分析", "避坑指南", "金句库"]
+
+# 时效性权重（代码层计算，不需要LLM）
+time_weights:
+  "7天内": 1.5
+  "1个月内": 1.2
+  "3个月内": 1.0
+  "1年内": 0.9
+  "超过1年": 0.8
+
+# 评分维度权重
+scoring_weights:
+  importance: 0.4    # 重要性
+  scarcity: 0.3      # 稀缺性
+  practicality: 0.3  # 实用性
+
+# 星级映射
+star_mapping:
+  90: 5
+  80: 4
+  70: 3
+  60: 2
+  0: 1
+
+# 存储配置
+storage:
+  db_path: "data/materials.db"
+  output_dir: "data/output"
