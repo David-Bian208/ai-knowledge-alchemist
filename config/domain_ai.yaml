@@ -10,7 +10,7 @@ sources:
   T1:
     - name: "OpenAI Blog"
       url: "https://openai.com/blog"
-      type: "rss"  # rss/html/api
+      type: "rss"
       weight: 1.0
     - name: "Anthropic Newsroom"
       url: "https://www.anthropic.com/news"
@@ -42,6 +42,17 @@ sources:
       url: "https://www.jiqizhixin.com/"
       type: "html"
       weight: 0.6
+
+  # 微信公众号信源（需要配置RSSHub）
+  T1_WeChat:
+    - name: "量子位"
+      wechat_id: "qbitai"
+      type: "wechat_rss"
+      weight: 0.8
+    - name: "新智元"
+      wechat_id: "AI_era"
+      type: "wechat_rss"
+      weight: 0.8
 
 # 预筛关键词（与AI无关的内容直接过滤）
 pre_filter_keywords:
