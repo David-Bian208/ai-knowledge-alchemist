@@ -1,0 +1,107 @@
+# V1.1 领域配置包（示例：AI领域）
+# 换领域只需替换此文件，零代码修改
+
+# 领域名称
+domain: "AI"
+
+# 信源配置
+sources:
+  # T1信源：一手信息，权重1.0
+  T1:
+    - name: "OpenAI Blog"
+      url: "https://openai.com/blog"
+      type: "rss"  # rss/html/api
+      weight: 1.0
+    - name: "Anthropic Newsroom"
+      url: "https://www.anthropic.com/news"
+      type: "html"
+      weight: 1.0
+    - name: "HuggingFace Blog"
+      url: "https://huggingface.co/blog"
+      type: "rss"
+      weight: 1.0
+
+  # T1.5信源：官方账号，权重0.8
+  T1_5:
+    - name: "OpenAI Developers"
+      url: "https://twitter.com/OpenAIDevs"
+      type: "api"
+      weight: 0.8
+    - name: "Anthropic Research"
+      url: "https://www.anthropic.com/research"
+      type: "html"
+      weight: 0.8
+
+  # T2信源：KOL/媒体，权重0.6
+  T2:
+    - name: "极客公园"
+      url: "https://www.geekpark.net/"
+      type: "html"
+      weight: 0.6
+    - name: "机器之心"
+      url: "https://www.jiqizhixin.com/"
+      type: "html"
+      weight: 0.6
+
+# 预筛关键词（与AI无关的内容直接过滤）
+pre_filter_keywords:
+  - "AI"
+  - "人工智能"
+  - "大模型"
+  - "LLM"
+  - "GPT"
+  - "Claude"
+  - "机器学习"
+  - "深度学习"
+  - "智能体"
+  - "Agent"
+
+# 内容维度选项
+content_dimensions:
+  - "方法论"
+  - "认知"
+  - "案例"
+  - "数据"
+  - "软件工具"
+  - "资源"
+
+# 场景维度选项
+scene_dimensions:
+  - "脚本素材"
+  - "竞品分析"
+  - "避坑指南"
+  - "金句库"
+
+# 评分维度
+scoring_dimensions:
+  importance:
+    weight: 0.4
+    description: "事件的行业影响程度"
+  scarcity:
+    weight: 0.3
+    description: "是不是独家/一手信息"
+  practicality:
+    weight: 0.3
+    description: "能不能直接用来做内容"
+
+# 精选阈值（不同信源等级不同阈值）
+selection_thresholds:
+  T1: 60
+  T1_5: 70
+  T2: 80
+
+# 时效性权重
+time_weights:
+  "7天内": 1.5
+  "1个月内": 1.2
+  "3个月内": 1.0
+  "1年内": 0.9
+  "超过1年": 0.8
+
+# 星级映射
+star_mapping:
+  90: 5
+  80: 4
+  70: 3
+  60: 2
+  0: 1

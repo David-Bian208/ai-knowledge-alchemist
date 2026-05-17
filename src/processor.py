@@ -55,9 +55,23 @@ class KnowledgeAlchemist:
 
     def process_url(self, url: str) -> Dict[str, Any]:
         """
-        处理URL，跑完6步全流程
+        处理URL，跑完5步全流程（分类→评分→计算→提炼）
+        步骤1（抓取）应该在外部完成，传入已抓取的内容
+        """
+        # 先抓取
+        logger.info("步骤1：开始抓取网页...")
+        crawl_result = self.crawler.fetch(url)
+        if not crawl_result.get("success"):
+            raise RuntimeError(f"抓取失败: {crawl_result.get('error')}")
+        
+        return self.process_crawl_result(url, crawl_result)
+    
+    def process_crawl_result(self, url: str, crawl_result: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        处理已抓取的网页内容，跑完剩余5步流程
         Args:
             url: 网页URL
+            crawl_result: 爬虫返回的结果（包含metadata和markdown）
         Returns:
             完整的处理结果
         """
@@ -71,12 +85,6 @@ class KnowledgeAlchemist:
             "star_level": 0,
             "archive_path": ""
         }
-        
-        # 步骤1：抓取网页
-        logger.info("步骤1：开始抓取网页...")
-        crawl_result = self.crawler.fetch(url)
-        if not crawl_result.get("success"):
-            raise RuntimeError(f"抓取失败: {crawl_result.get('error')}")
         
         result["metadata"] = crawl_result["metadata"].to_dict()
         markdown_content = crawl_result["markdown"]
