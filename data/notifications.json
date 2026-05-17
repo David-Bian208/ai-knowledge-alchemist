@@ -1,0 +1,65 @@
+[
+  {
+    "time": "2026-05-17T10:10:09.257223",
+    "title": "抓取失败: manual",
+    "message": "信源 manual 抓取失败\nURL: https://36kr.com/p/3275079370419584\n错误: 无法下载网页",
+    "level": "error",
+    "data": {
+      "source": "manual",
+      "url": "https://36kr.com/p/3275079370419584",
+      "error": "无法下载网页"
+    }
+  },
+  {
+    "time": "2026-05-17T10:10:09.257703",
+    "title": "处理失败: https://36kr.com/p/3275079370419584...",
+    "message": "素材处理失败\nURL: https://36kr.com/p/3275079370419584\n错误: 抓取失败: 无法下载网页",
+    "level": "error",
+    "data": {
+      "url": "https://36kr.com/p/3275079370419584",
+      "error": "抓取失败: 无法下载网页"
+    }
+  },
+  {
+    "time": "2026-05-17T10:10:25.807119",
+    "title": "抓取失败: manual",
+    "message": "信源 manual 抓取失败\nURL: https://www.ruanyifeng.com/blog/2025/05/weekly-438.html\n错误: 无法下载网页",
+    "level": "error",
+    "data": {
+      "source": "manual",
+      "url": "https://www.ruanyifeng.com/blog/2025/05/weekly-438.html",
+      "error": "无法下载网页"
+    }
+  },
+  {
+    "time": "2026-05-17T10:10:25.808122",
+    "title": "处理失败: https://www.ruanyifeng.com/blog/2025/05/weekly-438...",
+    "message": "素材处理失败\nURL: https://www.ruanyifeng.com/blog/2025/05/weekly-438.html\n错误: 抓取失败: 无法下载网页",
+    "level": "error",
+    "data": {
+      "url": "https://www.ruanyifeng.com/blog/2025/05/weekly-438.html",
+      "error": "抓取失败: 无法下载网页"
+    }
+  },
+  {
+    "time": "2026-05-17T10:11:17.214961",
+    "title": "抓取失败: manual",
+    "message": "信源 manual 抓取失败\nURL: https://www.infoq.cn/article/XYZabc123test\n错误: 无法提取正文内容",
+    "level": "error",
+    "data": {
+      "source": "manual",
+      "url": "https://www.infoq.cn/article/XYZabc123test",
+      "error": "无法提取正文内容"
+    }
+  },
+  {
+    "time": "2026-05-17T10:11:17.215732",
+    "title": "处理失败: https://www.infoq.cn/article/XYZabc123test...",
+    "message": "素材处理失败\nURL: https://www.infoq.cn/article/XYZabc123test\n错误: 抓取失败: 无法提取正文内容",
+    "level": "error",
+    "data": {
+      "url": "https://www.infoq.cn/article/XYZabc123test",
+      "error": "抓取失败: 无法提取正文内容"
+    }
+  }
+]
