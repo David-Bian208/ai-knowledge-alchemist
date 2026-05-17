@@ -21,3 +21,12 @@ schedule>=1.2.0
 
 # 通知Webhook（V1.2）
 requests>=2.31.0
+
+# 浏览器模拟（应对反爬）
+playwright>=1.44.0
+
+# 社交媒体/图片抓取（267+站点支持）
+gallery-dl>=1.32.0
+
+# 环境变量配置
+python-dotenv>=1.0.0

@@ -61,5 +61,47 @@
       "url": "https://www.infoq.cn/article/XYZabc123test",
       "error": "抓取失败: 无法提取正文内容"
     }
+  },
+  {
+    "time": "2026-05-17T10:26:00.304992",
+    "title": "抓取失败: manual",
+    "message": "信源 manual 抓取失败\nURL: https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ\n错误: 无法提取正文内容",
+    "level": "error",
+    "data": {
+      "source": "manual",
+      "url": "https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ",
+      "error": "无法提取正文内容"
+    }
+  },
+  {
+    "time": "2026-05-17T10:26:00.305684",
+    "title": "处理失败: https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ...",
+    "message": "素材处理失败\nURL: https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ\n错误: 抓取失败: 无法提取正文内容",
+    "level": "error",
+    "data": {
+      "url": "https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ",
+      "error": "抓取失败: 无法提取正文内容"
+    }
+  },
+  {
+    "time": "2026-05-17T10:26:09.017260",
+    "title": "抓取失败: manual",
+    "message": "信源 manual 抓取失败\nURL: https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ\n错误: 无法提取正文内容",
+    "level": "error",
+    "data": {
+      "source": "manual",
+      "url": "https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ",
+      "error": "无法提取正文内容"
+    }
+  },
+  {
+    "time": "2026-05-17T10:26:09.018116",
+    "title": "处理失败: https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ...",
+    "message": "素材处理失败\nURL: https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ\n错误: 抓取失败: 无法提取正文内容",
+    "level": "error",
+    "data": {
+      "url": "https://mp.weixin.qq.com/s/r6CE2U3Y0-pU05wF3_PuTQ",
+      "error": "抓取失败: 无法提取正文内容"
+    }
   }
 ]
