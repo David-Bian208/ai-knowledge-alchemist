@@ -4,10 +4,13 @@
 提取标题/发布时间/作者/来源等元数据，转为干净的Markdown格式
 """
 import logging
+import re
 from typing import Dict, Optional
 from datetime import datetime
+from urllib.parse import urlparse
 
 import trafilatura
+from trafilatura.metadata import extract_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +72,7 @@ class WebCrawler:
                 logger.error(f"抓取失败，无法下载: {url}")
                 return {"success": False, "metadata": None, "markdown": "", "error": "无法下载网页"}
             
-            # 提取正文（包含元数据）
+            # 提取正文
             result = trafilatura.extract(
                 downloaded,
                 include_comments=False,
@@ -99,27 +102,24 @@ class WebCrawler:
             return {"success": False, "metadata": None, "markdown": "", "error": str(e)}
     
     def _extract_metadata(self, html_content: str, url: str) -> ArticleMetadata:
-        """
-        提取文章元数据
-        trafilatura 的 extract() 函数已经内部解析了元数据，
-        但我们需要单独调用 metadata 提取
-        """
+        """提取文章元数据"""
+        title = ""
+        author = ""
+        publish_date = None
+        source = ""
+        
         try:
-            # 使用 trafilatura 的 metadata 提取
-            metadata_dict = trafilatura.extract_metadata(html_content)
+            # 使用 trafilatura 的 extract_metadata 函数
+            record = extract_metadata(html_content)
             
-            title = ""
-            author = ""
-            publish_date = None
-            source = ""
-            
-            if metadata_dict:
-                title = metadata_dict.get("title", "")
-                author = metadata_dict.get("author", "")
-                source = metadata_dict.get("sitename", "")
+            if record:
+                # record 是 TrafilaturaMetadata 对象，用 getattr 安全访问
+                title = getattr(record, 'title', '') or ''
+                author = getattr(record, 'author', '') or ''
+                source = getattr(record, 'sitename', '') or ''
                 
                 # 解析日期
-                date_str = metadata_dict.get("date")
+                date_str = getattr(record, 'date', '') or ''
                 if date_str:
                     try:
                         publish_date = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
@@ -128,28 +128,36 @@ class WebCrawler:
                             publish_date = datetime.strptime(date_str[:10], "%Y-%m-%d")
                         except:
                             pass
-            
-            # 如果没提取到标题，尝试从 URL 推断
-            if not title:
-                title = url.split("/")[-1].split("?")[0] or url
-            
-            # 如果没提取到来源，从域名推断
-            if not source:
-                try:
-                    from urllib.parse import urlparse
-                    parsed = urlparse(url)
-                    source = parsed.hostname or ""
-                except:
-                    pass
-            
-            return ArticleMetadata(
-                url=url,
-                title=title,
-                author=author,
-                publish_date=publish_date,
-                source=source
-            )
-            
         except Exception as e:
-            logger.warning(f"元数据提取失败，使用默认值: {e}")
-            return ArticleMetadata(url=url, title=url)
+            logger.warning(f"trafilatura 元数据提取失败: {e}")
+        
+        # 如果 trafilatura 没提取到标题，尝试从 HTML <title> 标签中提取
+        if not title:
+            try:
+                match = re.search(r'<title[^>]*>(.*?)</title>', html_content, re.DOTALL | re.IGNORECASE)
+                if match:
+                    title = match.group(1).strip()
+                    # 清理标题中的网站名后缀
+                    title = re.sub(r'\s*[-|–—]\s*\w+.*$', '', title)
+            except:
+                pass
+        
+        # 如果还没提取到标题，从 URL 推断
+        if not title:
+            title = url.split("/")[-1].split("?")[0] or url
+        
+        # 如果没提取到来源，从域名推断
+        if not source:
+            try:
+                parsed = urlparse(url)
+                source = parsed.hostname or ""
+            except:
+                pass
+        
+        return ArticleMetadata(
+            url=url,
+            title=title,
+            author=author,
+            publish_date=publish_date,
+            source=source
+        )
