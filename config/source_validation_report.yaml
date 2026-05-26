@@ -1,0 +1,35 @@
+reachable: 8
+total: 13
+unreachable: 5
+unreachable_sources:
+- error: HTTP 404
+  id: '22'
+  name: 36氪AI频道
+  reachable: false
+  status: 404
+  url: https://36kr.com/information/ai
+- error: HTTP 403
+  id: '52'
+  name: 知乎AI话题热门
+  reachable: false
+  status: 403
+  url: https://www.zhihu.com/topic/19551168/hot
+- error: HTTP 404
+  id: '29'
+  name: 极客公园AI
+  reachable: false
+  status: 404
+  url: https://www.geekpark.net/topics/ai
+- error: HTTP 403
+  id: '110'
+  name: 阮一峰科技周刊
+  reachable: false
+  status: 403
+  url: https://www.ruanyifeng.com/blog/atom.xml
+- error: 连接失败
+  id: '42'
+  name: Hacker News 热门
+  reachable: false
+  status: connection_error
+  url: https://news.ycombinator.com/
+validation_date: '2026-05-25 07:36:16'

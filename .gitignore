@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Node
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/*.log
+
+# Database (data will be recreated)
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Test
+test_output/
+comprehensive_test.py
+test_report.*
+
+# Config backups
+config/sources.yaml.backup.*
+config/sources.yaml.bak
+config/*.bak
+
+# OS
+.DS_Store
+Thumbs.db

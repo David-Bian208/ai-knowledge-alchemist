@@ -1,0 +1,257 @@
+reachable: 9
+recommended_sources:
+- content_count: 5
+  content_success: true
+  content_type: rss
+  direction: decision
+  error: null
+  id: '203'
+  name: Farnam Street（决策思维模型博客）
+  reachable: true
+  sample_items:
+  - link: https://fs.blog/knowledge-project-podcast/outliers-chung-ju-yung/
+    summary: <p>Chung Ju-yung built Hyundai because he refused to be stopped. He is
+      known for turning Hyundai into an industrial force that helped transform South
+      Korea. The company built highways, ships, cars, an
+    title: '[Outliers] Chung Ju-yung: The Hyundai Founder Who Put a Country on His
+      Back'
+  - link: https://fs.blog/knowledge-project-podcast/winston-weinberg/
+    summary: '<p>Winston Weinberg is the CEO and co-founder of Harvey, the AI platform
+      built for the legal industry. Available Now: YouTube &#124; Spotify &#124; Apple
+      Podcasts &#124; Transcript In this episode, Wi'
+    title: 'Winston Weinberg: Speed, Stress, and Better Decisions'
+  - link: https://fs.blog/knowledge-project-podcast/greg-brockman/
+    summary: <p>The AI race, the future of AGI, and the inside story of OpenAI. Greg
+      Brockman is the co-founder and President of OpenAI, the company behind ChatGPT
+      and GPT-5. He was the first engineer at Stripe be
+    title: 'Greg Brockman: Inside the 72 Hours That Almost Killed OpenAI'
+  status: success
+  url: https://fs.blog/feed/
+- content_count: 5
+  content_success: true
+  content_type: rss
+  direction: decision
+  error: null
+  id: '204'
+  name: James Clear（习惯与决策博客）
+  reachable: true
+  sample_items:
+  - link: https://jamesclear.com/2019-annual-review
+    summary: Another year complete. Here's a quick recap of 2019, which also happened
+      to be one of the craziest years of my life. As always, this Annual Review will
+      answer three questions. What went well this year
+    title: My 2019 Annual Review
+  - link: https://jamesclear.com/atomic-habits-first-birthday
+    summary: 'One year ago today, Atomic Habits was born. The last 12 months have
+      been a wild ride: 1.1 million copies sold worldwide 12 consecutive months on
+      the New York Times best seller list (currently #3) Repe'
+    title: Happy 1st Birthday, Atomic Habits! (plus 3 gifts for you…)
+  - link: https://jamesclear.com/saying-no
+    summary: The ultimate productivity hack is saying no. Not doing something will
+      always be faster than doing it. This statement reminds me of the old computer
+      programming saying, &#8220;Remember that there is no
+    title: The Ultimate Productivity Hack is Saying No
+  status: success
+  url: https://jamesclear.com/feed
+- content_count: 5
+  content_success: true
+  content_type: rss
+  direction: decision
+  error: null
+  id: '208'
+  name: Stratechery（商业战略分析博客）
+  reachable: true
+  sample_items:
+  - link: https://stratechery.com/2026/the-data-center-veto/
+    summary: The best Stratechery content from the week of May 18, 2026, including
+      data center discontent, agent economics, and slime mold.
+    title: '2026.21: The Data Center Veto'
+  - link: https://stratechery.com/2026/an-interview-with-parallel-founder-parag-agarwal-about-valuing-content-on-the-agentic-web/
+    summary: An interview with Parallel founder Parag Agarwal about valuing content
+      and incentivizing its creation in a world of agents (plus questions about Twitter).
+    title: An Interview with Parallel Founder Parag Agarwal About Valuing Content
+      on the Agentic Web
+  - link: https://stratechery.com/2026/google-i-o-world-models-i-o-spaghetti/
+    summary: Google I/O put AI everywhere, for better and for worse. Meanwhile, is
+      DeepMind aligned with Google's business objectives?
+    title: Google I/O, World Models, I/O Spaghetti
+  status: success
+  url: https://stratechery.com/feed/
+- content_count: 5
+  content_success: true
+  content_type: web
+  direction: personal
+  error: null
+  id: '301'
+  name: 少数派（效率工具+方法网站）
+  reachable: true
+  sample_items:
+  - link: https://sspai.com/post/110130
+    title: 派早报：GitHub 在微软治下面临技术和人员流失困境周一25
+  - link: /a/K8qbgz
+    title: 来与少数派一起看 Apple WWDC26
+  - link: /a/K1492J
+    title: 精彩之下的反常时刻F1 2026 年新规悖论
+  status: success
+  url: https://sspai.com/
+- content_count: 5
+  content_success: true
+  content_type: rss
+  direction: personal
+  error: null
+  id: '303'
+  name: Cal Newport（深度工作博客）
+  reachable: true
+  sample_items:
+  - link: https://calnewport.com/the-dark-side-of-the-jevons-paradox/
+    summary: <p>If you’ve been following technology news recently, you’ve probably
+      noticed a sudden increase in references to a 19th-century economics theory called
+      the ​Jevons Paradox​, which ... <a class="read-m
+    title: The Dark Side of the Jevons Paradox
+  - link: https://calnewport.com/easy-is-overrated/
+    summary: <p>“Something is up in academic research,” ​write​ the members of an
+      AI Task Force convened by the journal Organization Science. As they go on to
+      ... <a class="read-more" href="https://calnewport.com/
+    title: Easy is Overrated
+  - link: https://calnewport.com/on-bottlenecks-and-productivity/
+    summary: '<p>David Epstein, the #1 New York Times bestselling author of ​The Sports
+      Gene​ and ​Range​, has a new book out called ​Inside the Box​. As ... <a class="read-more"
+      href="https://calnewport.com/on-bot'
+    title: On Bottlenecks and Productivity
+  status: success
+  url: https://calnewport.com/feed/
+- content_count: 5
+  content_success: true
+  content_type: web
+  direction: personal
+  error: null
+  id: '306'
+  name: 利器社区（创作者工具网站）
+  reachable: true
+  sample_items:
+  - link: /chengbao45/
+    title: 我们避而不谈的东西都像极了我们自己 | 利器x城堡
+  - link: /gangpaodie9w/
+    title: 利器访谈：钢炮爹九万，亲子、旅行、美食 vlogger
+  - link: /chiefbb/
+    title: 利器访谈：chief-BB-officer, vlogger
+  status: success
+  url: https://liqi.io/
+- content_count: 0
+  content_success: true
+  content_type: web
+  direction: management
+  error: null
+  id: '404'
+  name: 混沌学园（创新管理公众号）
+  reachable: true
+  sample_items: []
+  status: success
+  url: https://www.hundun.cn/
+- content_count: 5
+  content_success: true
+  content_type: web
+  direction: management
+  error: null
+  id: '403'
+  name: 中欧商业评论（管理实践公众号）
+  reachable: true
+  sample_items:
+  - link: https://www.ceibs.edu/mba
+    title: Introduction
+  - link: https://www.ceibs.edu/mba/programme-overview
+    title: Programme Overview
+  - link: https://www.ceibs.edu/mba/one-year-option
+    title: One-Year Option
+  status: success
+  url: https://www.ceibs.edu/
+- content_count: 5
+  content_success: true
+  content_type: rss
+  direction: personal
+  error: null
+  id: '308'
+  name: Tiago Forte（第二大脑博客）
+  reachable: true
+  sample_items:
+  - link: https://fortelabs.com/blog/5-questions-to-help-you-navigate-uncertainty/
+    summary: <p>In the early 2010s, the gaming startup Tiny Speck was a darling of
+      the tech industry. The company had raised $17 million. The launch of its first
+      game, Glitch, was covered by international media, i
+    title: 5 Questions to Help You Navigate Uncertainty
+  - link: https://fortelabs.com/blog/why-para-is-the-key-to-the-ai-era/
+    summary: <p>I recently did an experiment. I allowed files and folders to accumulate
+      on my computer for a month – just let them pile up without organizing anything.
+      By the end of that month, I had 222 individua
+    title: Why PARA Is the Key to the AI Era
+  - link: https://fortelabs.com/blog/groundbreakers-2/
+    summary: <p>Six years ago, I attended a week-long course in Northern California
+      called Groundbreakers. Facilitated by Joe Hudson and his wife, Tara, it was
+      one of the most impactful experiences of my life. The
+    title: 'Groundbreakers 2: Seeking the Heart of Fear'
+  status: success
+  url: https://fortelabs.co/feed/
+test_date: '2026-05-25 07:38:28'
+total: 17
+unreachable: 8
+unreachable_sources:
+- direction: decision
+  error: HTTPSConnectionPool(host='www.liurun.com', port=44
+  id: '201'
+  name: 刘润（公众号/博客）
+  reachable: false
+  status: error
+  url: https://www.liurun.com/
+- direction: decision
+  error: HTTPSConnectionPool(host='www.zhangzhang.info', po
+  id: '206'
+  name: 辉哥奇谭（投资+人生决策公众号）
+  reachable: false
+  status: error
+  url: https://www.zhangzhang.info/
+- direction: decision
+  error: HTTP 404
+  id: '210'
+  name: Morgan Housel（投资心理学博客）
+  reachable: false
+  status: 404
+  url: https://collabfund.com/feed/
+- direction: management
+  error: '(''Connection aborted.'', ConnectionResetError(104, '
+  id: '401'
+  name: 华章管理（管理书籍+案例公众号）
+  reachable: false
+  status: error
+  url: https://www.hzbook.com/
+- direction: management
+  error: HTTPSConnectionPool(host='www.hbrchina.org', port=
+  id: '402'
+  name: 哈佛商业评论（管理前沿公众号）
+  reachable: false
+  status: error
+  url: https://www.hbrchina.org/
+- content_count: 0
+  content_success: false
+  content_type: rss
+  direction: decision
+  error: 无内容
+  id: '205'
+  name: Paul Graham（创业决策博客）
+  reachable: true
+  sample_items: []
+  status: success
+  url: http://www.paulgraham.com/rss.xml
+- direction: management
+  error: HTTPSConnectionPool(host='www.bijixia.com', port=4
+  id: '405'
+  name: 笔记侠（管理课程笔记公众号）
+  reachable: false
+  status: error
+  url: https://www.bijixia.com/
+- direction: personal
+  error: HTTPSConnectionPool(host='www.warfalcon.com', port
+  id: '310'
+  name: warfalcon（时间管理100天行动公众号）
+  reachable: false
+  status: error
+  url: https://www.warfalcon.com/

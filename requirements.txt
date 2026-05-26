@@ -1,0 +1,32 @@
+# 知识炼金术 Agent V1.0 依赖
+# Python 版本要求：>= 3.8
+
+# LLM 调用
+openai>=1.12.0
+
+# 配置管理
+pyyaml>=6.0.1
+
+# 爬虫/正文提取
+trafilatura>=1.6.0
+
+# RSS订阅（V1.1）
+feedparser>=6.0.10
+
+# 向量匹配（V1.1去重使用）
+numpy>=1.24.0
+
+# 定时调度（V1.2）
+schedule>=1.2.0
+
+# 通知Webhook（V1.2）
+requests>=2.31.0
+
+# 浏览器模拟（应对反爬）
+playwright>=1.44.0
+
+# 社交媒体/图片抓取（267+站点支持）
+gallery-dl>=1.32.0
+
+# 环境变量配置
+python-dotenv>=1.0.0
