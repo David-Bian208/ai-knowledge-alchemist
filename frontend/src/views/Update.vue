@@ -239,8 +239,8 @@ import { IconLoading, IconUp, IconDown } from '@arco-design/web-vue/es/icon'
 
 const fetchRunning = ref(false)
 const fetchAborting = ref(false)
-const intervalEnabled = ref(true)
-const scheduledEnabled = ref(false)
+const intervalEnabled = ref(false)
+const scheduledEnabled = ref(true)
 const syncIntervalValue = ref(1)
 const syncUnit = ref('hours')
 const currentIntervalMinutes = ref(60)

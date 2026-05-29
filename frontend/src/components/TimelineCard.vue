@@ -36,6 +36,11 @@
       
       <p class="summary">{{ truncatedSummary }}</p>
       
+      <div v-if="isShortContent" class="content-warning">
+        <span class="warning-icon">⚠️</span>
+        <span class="warning-text">内容较短，建议查看原文</span>
+      </div>
+      
       <div class="tags-row">
         <span v-if="item.content_type" class="tag tag-type">{{ item.content_type }}</span>
         <span v-if="item.category" class="tag tag-category">{{ categoryLabel }}</span>
@@ -90,6 +95,12 @@ const scoreColor = computed(() => {
 const truncatedSummary = computed(() => {
   const s = props.item.summary || '暂无摘要'
   return s.length > 200 ? s.slice(0, 200) + '...' : s
+})
+
+const isShortContent = computed(() => {
+  // 判断内容是否过短（小于200字符）
+  const content = props.item.content || props.item.summary || ''
+  return content.length < 200
 })
 
 const displayTags = computed(() => {
@@ -273,4 +284,24 @@ function formatTime(dateStr) {
 .light .recommendation { background: rgba(99,102,241,0.04); color: rgba(0,0,0,0.6); }
 .light .rec-label { color: #6366F1; }
 .light .rec-text { color: rgba(0,0,0,0.5); }
+
+.content-warning {
+  background: rgba(255, 193, 7, 0.08);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.warning-icon {
+  font-size: 12px;
+}
+.warning-text {
+  font-size: 11px;
+  color: #F59E0B;
+}
+.light .content-warning {
+  background: rgba(255, 193, 7, 0.06);
+}
 </style>

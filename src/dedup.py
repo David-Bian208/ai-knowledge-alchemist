@@ -43,13 +43,17 @@ class DeduplicationService:
         """
         从数据库加载已有URL
         Args:
-            storage: MaterialStorage实例
+            storage: HotStorage实例
         Returns:
             加载的URL数量
         """
         try:
-            materials = storage.query_materials(limit=10000)
-            self.seen_urls = {m["url"] for m in materials}
+            conn = storage._get_conn()
+            cursor = conn.cursor()
+            cursor.execute("SELECT url FROM selected_items WHERE url IS NOT NULL AND url != ''")
+            rows = cursor.fetchall()
+            self.seen_urls = {row['url'] for row in rows}
+            conn.close()
             logger.info(f"加载已有URL: {len(self.seen_urls)} 条")
             return len(self.seen_urls)
         except Exception as e:
@@ -142,14 +146,26 @@ class DeduplicationService:
             return 0
         
         try:
+            conn = storage._get_conn()
+            cursor = conn.cursor()
+            
             # 加载最近1000条已入库的内容
-            materials = storage.query_materials(limit=1000)
+            cursor.execute("""
+                SELECT id, title, content, full_content, final_score 
+                FROM selected_items 
+                WHERE selected = 1 AND (content IS NOT NULL OR full_content IS NOT NULL)
+                ORDER BY created_at DESC 
+                LIMIT 1000
+            """)
+            materials = cursor.fetchall()
+            conn.close()
+            
             count = 0
-            for mat in materials:
-                title = mat.get("title", "")
-                content = mat.get("content", "") or mat.get("full_content", "")
-                score = mat.get("final_score", 0)
-                item_id = mat.get("id")
+            for row in materials:
+                title = row['title'] or ""
+                content = row['content'] or row['full_content'] or ""
+                score = row['final_score'] or 0
+                item_id = row['id']
                 
                 if not title:
                     continue

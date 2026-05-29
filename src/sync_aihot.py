@@ -114,6 +114,22 @@ def sync_items(mode="selected", category=None, max_retries=3):
         # 跳过反爬严重的域名
         if any(d in url.lower() for d in SKIP_DOMAINS):
             skipped_domain += 1
+            
+            # Twitter/X内容降级处理：降低评分并标记
+            is_twitter = any(d in url.lower() for d in ['x.com', 'twitter.com'])
+            if is_twitter:
+                # 对Twitter内容：降低评分20%，只有高分推文才入库
+                base_score = item.get("final_score") or item.get("score", 85)
+                final_score = min(int(base_score * 0.8), 100)  # 降低20%
+                
+                # 只入库分数>=60的推文（过滤低质量推文）
+                if final_score < 60:
+                    print(f"  跳过低分推文: {item['title'][:30]}... (分数{final_score})")
+                    continue
+            else:
+                base_score = item.get("final_score") or item.get("score", 85)
+                final_score = min(base_score, 100)
+            
             # 检查是否已存在，不存在也要记录（用AI HOT摘要作为内容）
             conn = storage._get_conn()
             c = conn.cursor()
@@ -130,29 +146,40 @@ def sync_items(mode="selected", category=None, max_retries=3):
                 else:
                     publish_date = datetime.now().isoformat()
                 
-                base_score = item.get("final_score") or item.get("score", 85)
-                final_score = min(base_score, 100)
-                
                 tier_map = {"T1": "T1", "T1.5": "T2", "T2": "T3"}
                 our_tier = tier_map.get(item.get("source_tier") or item.get("tier", "T1.5"), "T2")
                 
-                # 用AI HOT摘要作为内容
+                # 用AI HOT摘要作为内容，并添加社交媒体标记
                 summary_content = f"# {item['title']}\n\n> {item.get('summary', '')}\n\n来源: {item.get('source', '')}"
+                
+                # 过滤过短的推文内容（<100字符的无意义内容）
+                if is_twitter and len(item.get('summary', '')) < 100:
+                    print(f"  跳过过短推文(<100字符): {item['title'][:30]}...")
+                    conn.close()
+                    continue
+                
+                if is_twitter:
+                    summary_content += "\n\n *社交媒体内容，建议结合原文URL查看*"
+                    # 为Twitter内容设置tags
+                    tags_str = '["社交媒体", "Twitter/X"]'
+                else:
+                    tags_str = '[]'
                 
                 try:
                     c.execute("""
                     INSERT INTO selected_items (
                         url, title, source, source_tier, category, publish_date,
                         summary, final_score, selected, created_at, source_from,
-                        content, full_content
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        content, full_content, tags
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, (
                         url, item["title"], item["source"], our_tier,
                         item.get("category", "industry"), publish_date,
                         item.get("summary", ""), final_score,
                         1 if mode == "selected" else 0,
                         datetime.now().isoformat(), "aihot",
-                        summary_content, summary_content
+                        summary_content, summary_content,
+                        tags_str
                     ))
                     conn.commit()
                     saved += 1
@@ -173,34 +200,6 @@ def sync_items(mode="selected", category=None, max_retries=3):
             conn.close()
             continue
         
-        # 语义去重检查
-        title = item.get("title", "")
-        summary = item.get("summary", "")
-        duplicate_check = dedup_service.check_semantic_duplicate(
-            title=title,
-            content=summary,
-            score=final_score
-        )
-        
-        if duplicate_check["is_duplicate"]:
-            dup_info = duplicate_check["duplicate_info"]
-            # 重复内容处理：保留最高分版本
-            if final_score > dup_info["score"]:
-                # 当前内容分数更高，更新已有内容
-                print(f"  语义重复(当前分更高，更新): 当前分{final_score}，已有分{dup_info['score']}，相似度{dup_info['similarity']:.2f}")
-                # 先完成抓取，再更新已有内容
-                update_mode = True
-                existing_id = dup_info["id"]
-            else:
-                # 已有内容分数更高，跳过当前内容
-                skipped += 1
-                print(f"  语义重复(已有分更高，跳过): 当前分{final_score}，已有分{dup_info['score']}，相似度{dup_info['similarity']:.2f}")
-                conn.close()
-                continue
-        else:
-            update_mode = False
-            existing_id = None
-        
         # 转换时间格式
         published_at = item.get("publishedAt")
         if published_at:
@@ -212,7 +211,7 @@ def sync_items(mode="selected", category=None, max_retries=3):
         else:
             publish_date = datetime.now().isoformat()
         
-        # 差异化评分
+        # 差异化评分（必须在语义去重前计算）
         base_score = item.get("final_score") or item.get("score", 0)
         if base_score > 0:
             final_score = min(base_score, 100)
@@ -235,6 +234,33 @@ def sync_items(mode="selected", category=None, max_retries=3):
                 final_score = max(65, min(100, int(time_score + source_bonus)))
             except Exception as e:
                 final_score = 85
+        
+        # 语义去重检查
+        title = item.get("title", "")
+        summary = item.get("summary", "")
+        duplicate_check = dedup_service.check_semantic_duplicate(
+            title=title,
+            content=summary,
+            score=final_score
+        )
+        
+        if duplicate_check["is_duplicate"]:
+            dup_info = duplicate_check["duplicate_info"]
+            # 重复内容处理：保留最高分版本
+            if final_score > dup_info["score"]:
+                # 当前内容分数更高，更新已有内容
+                print(f"  语义重复(当前分更高，更新): 当前分{final_score}，已有分{dup_info['score']}，相似度{dup_info['similarity']:.2f}")
+                update_mode = True
+                existing_id = dup_info["id"]
+            else:
+                # 已有内容分数更高，跳过当前内容
+                skipped += 1
+                print(f"  语义重复(已有分更高，跳过): 当前分{final_score}，已有分{dup_info['score']}，相似度{dup_info['similarity']:.2f}")
+                conn.close()
+                continue
+        else:
+            update_mode = False
+            existing_id = None
         
         tier_map = {"T1": "T1", "T1.5": "T2", "T2": "T3"}
         aihot_tier = item.get("source_tier") or item.get("tier", "T1.5")
@@ -279,11 +305,37 @@ def sync_items(mode="selected", category=None, max_retries=3):
             except Exception as e:
                 print(f"  国内源搜索失败: {e}")
         
-        # 策略3：AI HOT摘要作为后备
+        # 策略3：AI HOT摘要作为后备，同时尝试抓取原文正文
         if not crawl_ok:
             crawl_failed += 1
+            # 先用摘要兜底
             content = f"# {item['title']}\n\n> {item.get('summary', '')}\n\n来源: {item.get('source', '')}"
             content_source = "摘要后备"
+            
+            # 如果原文URL可访问，尝试抓取正文覆盖摘要
+            if url and not any(d in url.lower() for d in SKIP_DOMAINS):
+                try:
+                    print(f"  摘要后备，尝试抓取原文正文: {url[:50]}...")
+                    orig_result = crawler.fetch(url)
+                    if orig_result.get("success") and orig_result.get("markdown"):
+                        orig_content = orig_result["markdown"]
+                        if len(orig_content) > 200:  # 确保有实质内容
+                            content = orig_content
+                            if len(content) > 50000:
+                                content = content[:50000] + "\n\n[内容过长已截断]"
+                            crawl_ok = True
+                            content_source = f"原文URL({url.split('/')[2]})"
+                            crawl_success += 1
+                            crawl_failed -= 1
+                            print(f"  原文正文抓取成功: {len(content)} 字符")
+                        else:
+                            print(f"  原文正文字数过少 ({len(orig_content)} 字符)，使用摘要")
+                    else:
+                        print(f"  原文抓取失败: {orig_result.get('error', 'unknown')}")
+                except Exception as e:
+                    print(f"  原文抓取异常: {e}")
+            else:
+                crawl_failed += 1
         else:
             crawl_success += 1
         

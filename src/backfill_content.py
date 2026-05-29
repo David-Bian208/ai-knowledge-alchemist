@@ -34,10 +34,23 @@ def backfill_content(limit=None, source_from=None, dry_run=False):
     
     # 查询没有正文的内容
     query = """
-        SELECT id, url, title, source_from 
+        SELECT id, url, title, source_from, content, full_content 
         FROM selected_items 
-        WHERE (content IS NULL OR length(content) < 50) 
-          AND (full_content IS NULL OR length(full_content) < 50)
+        WHERE (
+            (content IS NULL OR length(content) < 50) 
+            AND (full_content IS NULL OR length(full_content) < 50)
+        )
+        OR (
+            -- 检测HTML链接-only的内容（RSS源常见问题）
+            content LIKE '%<a href%' AND length(content) < 500
+        )
+        OR (
+            -- 检测内容过短（<200字符）且不是社交媒体的内容
+            length(content) < 200 
+            AND source_from != 'aihot'
+            AND source_from NOT LIKE '%twitter%'
+            AND source_from NOT LIKE '%x.com%'
+        )
     """
     params = []
     

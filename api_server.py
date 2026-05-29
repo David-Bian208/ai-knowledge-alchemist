@@ -506,7 +506,9 @@ async def trigger_fetch(background_tasks: BackgroundTasks):
     if _fetch_status["running"]:
         return {"status": "running", "message": "刷新任务已在运行中，请等待完成"}
     
-    _fetch_cancel_event = None
+    # 关键修复：每次新任务都要创建新的取消事件
+    import threading
+    _fetch_cancel_event = threading.Event()
     
     _fetch_status = {
         "running": True,
@@ -532,7 +534,12 @@ async def abort_fetch():
     global _fetch_cancel_event
     if _fetch_status["running"] and not _fetch_status["aborting"]:
         _fetch_status["aborting"] = True
-        fetch_logger.info("[中止] 用户请求中止刷新任务...")
+        # 关键修复：设置取消事件，通知所有线程停止
+        if _fetch_cancel_event:
+            _fetch_cancel_event.set()
+            fetch_logger.info("[中止] 用户请求中止刷新任务，已发送取消信号")
+        else:
+            fetch_logger.warning("[中止] 取消事件未初始化，无法发送信号")
         return {"status": "aborting", "message": "正在中止刷新任务..."}
     return {"status": "no_running_task", "message": "没有正在运行的任务"}
 
@@ -545,14 +552,16 @@ def _do_fetch_full():
     """后台执行全量抓取 - 双数据源并行：AI HOT同步 + 所有信息源"""
     import threading
     import time
+    import traceback
     global _fetch_status, _fetch_cancel_event
     
     fetch_logger.info("开始执行全量刷新任务...")
+    fetch_logger.info(f"[调试] _fetch_cancel_event 状态: is_set={_fetch_cancel_event.is_set() if _fetch_cancel_event else 'None'}")
     
     def sync_ai_hot_task():
         global _fetch_status
         try:
-            fetch_logger.info("[步骤1] 开始从 AI HOT API 同步内容...")
+            fetch_logger.info("[AI HOT] 开始执行同步任务...")
             time.sleep(0.5)
             
             from src.sync_aihot import sync_items
@@ -566,7 +575,7 @@ def _do_fetch_full():
                 return {"saved": 0, "skipped": 0, "status": "disabled"}
             
             if _fetch_cancel_event and _fetch_cancel_event.is_set():
-                fetch_logger.info("[AI HOT] 任务已中止")
+                fetch_logger.info("[AI HOT] 任务已中止（检测到取消信号）")
                 return {"saved": 0, "status": "aborted"}
             
             fetch_logger.info("[AI HOT] 开始同步精选内容...")
@@ -575,7 +584,7 @@ def _do_fetch_full():
             time.sleep(0.3)
             
             if _fetch_cancel_event and _fetch_cancel_event.is_set():
-                fetch_logger.info("[AI HOT] 任务已中止")
+                fetch_logger.info("[AI HOT] 任务已中止（精选后检测）")
                 return {"saved": saved_selected, "status": "aborted"}
             
             fetch_logger.info("[AI HOT] 开始同步全部内容...")
@@ -583,11 +592,10 @@ def _do_fetch_full():
             fetch_logger.info(f"[AI HOT] 全部内容同步完成，新增 {saved_all} 条")
             
             total_saved = saved_selected + saved_all
-            fetch_logger.info(f"[AI HOT 同步完成] 共新增 {total_saved} 条内容")
+            fetch_logger.info(f"[AI HOT] 同步完成，共新增 {total_saved} 条内容")
             return {"saved": total_saved, "selected": saved_selected, "all": saved_all, "status": "success"}
         except Exception as e:
-            fetch_logger.error(f"[AI HOT 同步失败] {e}")
-            import traceback
+            fetch_logger.error(f"[AI HOT] 同步异常: {e}")
             fetch_logger.error(traceback.format_exc())
             return {"saved": 0, "status": "error", "error": str(e)}
 
@@ -640,14 +648,18 @@ def _do_fetch_full():
             if rss_sources:
                 import concurrent.futures
                 fetch_logger.info("[RSS] 开始并发抓取...")
-                with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
+                try:
                     futures = {executor.submit(fetch_rss_source, source): source for source in rss_sources}
                     completed = 0
                     for future in concurrent.futures.as_completed(futures):
                         source = futures[future]
                         completed += 1
                         if _fetch_cancel_event and _fetch_cancel_event.is_set():
-                            fetch_logger.info(f"[RSS] 任务已中止")
+                            fetch_logger.info(f"[RSS] 任务已中止，取消剩余 {len(futures) - completed} 个任务")
+                            # 取消所有未完成的Future
+                            for f in futures:
+                                f.cancel()
                             break
                         try:
                             name, entries, error = future.result()
@@ -657,6 +669,8 @@ def _do_fetch_full():
                         except Exception as e:
                             fetch_logger.error(f"[RSS] {source.name} 异常: {e}")
                             rss_fetched_data[source.name] = {'entries': [], 'error': str(e)}
+                finally:
+                    executor.shutdown(wait=False, cancel_futures=True)
                 
                 fetch_logger.info(f"[RSS] 并发抓取完成，共 {len(rss_fetched_data)} 个源")
             
@@ -695,14 +709,18 @@ def _do_fetch_full():
                 fetch_logger.info(f"[Web] 可抓取: {len(fetchable_web)}个, 跳过社交: {len(skipped_web)}个")
                 fetch_logger.info("[Web] 开始并发抓取...")
                 
-                with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
+                try:
                     futures = {executor.submit(fetch_web_source, source): source for source in fetchable_web}
                     completed = 0
                     for future in concurrent.futures.as_completed(futures):
                         source = futures[future]
                         completed += 1
                         if _fetch_cancel_event and _fetch_cancel_event.is_set():
-                            fetch_logger.info(f"[Web] 任务已中止")
+                            fetch_logger.info(f"[Web] 任务已中止，取消剩余 {len(futures) - completed} 个任务")
+                            # 取消所有未完成的Future
+                            for f in futures:
+                                f.cancel()
                             break
                         try:
                             name, crawl_result, error = future.result()
@@ -712,6 +730,8 @@ def _do_fetch_full():
                         except Exception as e:
                             fetch_logger.error(f"[Web] {source.name} 异常: {e}")
                             web_fetched_data[source.name] = {'crawl_result': None, 'error': str(e)}
+                finally:
+                    executor.shutdown(wait=False, cancel_futures=True)
                 
                 # 社交媒体源直接标记为跳过
                 for s in skipped_web:
@@ -884,7 +904,9 @@ def _do_fetch_full():
         # AI HOT 同步
         if aihot_enabled:
             fetch_logger.info("[AI HOT] 开始同步...")
-            t1 = threading.Thread(target=lambda: results.update({"aihot": sync_ai_hot_task()}))
+            def sync_task():
+                results["aihot"] = sync_ai_hot_task()
+            t1 = threading.Thread(target=sync_task)
             threads.append(t1)
             t1.start()
         else:
@@ -893,13 +915,20 @@ def _do_fetch_full():
         
         # 全量信息源爬虫
         fetch_logger.info("[信息源] 开始抓取...")
-        t2 = threading.Thread(target=lambda: results.update({"crawler": crawl_all_sources_task()}))
+        def crawl_task():
+            results["crawler"] = crawl_all_sources_task()
+        t2 = threading.Thread(target=crawl_task)
         threads.append(t2)
         t2.start()
         
-        # 等待所有任务完成
+        # 等待所有任务完成（带中止检查）
         for t in threads:
-            t.join()
+            # 每1秒检查一次中止状态
+            while t.is_alive():
+                t.join(timeout=1.0)
+                if _fetch_cancel_event and _fetch_cancel_event.is_set():
+                    fetch_logger.info("[全局] 检测到中止信号，等待线程退出...")
+                    break
         
         # 汇总结果
         total_saved = 0
@@ -1108,9 +1137,9 @@ async def get_update_config():
         return {
             "code": 0,
             "data": {
-                "interval_enabled": storage.get_config("interval_enabled", "true") == "true",
+                "interval_enabled": storage.get_config("interval_enabled", "false") == "true",
                 "sync_interval": int(storage.get_config("sync_interval", "60")),
-                "scheduled_enabled": storage.get_config("scheduled_enabled", "false") == "true",
+                "scheduled_enabled": storage.get_config("scheduled_enabled", "true") == "true",
                 "scheduled_time": int(storage.get_config("scheduled_time", "8")),
                 "auto_generate_report": storage.get_config("auto_generate_report", "true") == "true"
             }

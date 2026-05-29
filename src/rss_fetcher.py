@@ -77,7 +77,11 @@ class RSSFetcher:
                 # 如果开启了全文抓取，且RSS中没有完整内容，则抓取原文
                 if self.fetch_full_content:
                     article_url = entry.get("link", "")
-                    has_full_content = hasattr(entry, 'content') and entry.content and len(entry.content[0].value) > 500
+                    # 检查是否有完整内容（content字段或summary > 500字符）
+                    has_full_content = (
+                        (hasattr(entry, 'content') and entry.content and len(entry.content[0].value) > 500)
+                        or (len(entry.get("summary", "")) > 500)
+                    )
                     if not has_full_content and article_url:
                         logger.info(f"抓取原文全文: {article_url[:60]}...")
                         full_content = self._fetch_article_content(article_url)
