@@ -112,7 +112,13 @@ class DailyScheduler:
             # 读取定时更新配置
             scheduled_enabled = storage.get_config("scheduled_enabled", "false") == "true"
             if scheduled_enabled:
-                scheduled_hour = int(storage.get_config("scheduled_time", "8"))
+                scheduled_time_str = storage.get_config("scheduled_time", "08:00")
+            if ":" in str(scheduled_time_str):
+                scheduled_hour = int(scheduled_time_str.split(":")[0])
+                scheduled_minute = int(scheduled_time_str.split(":")[1])
+            else:
+                scheduled_hour = int(scheduled_time_str)
+                scheduled_minute = 0
                 scheduled_minute = 0
                 today_date = now.strftime("%Y-%m-%d")
                 

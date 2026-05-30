@@ -1420,6 +1420,31 @@ async def spa_fallback(full_path: str):
         return FileResponse(index_file)
     return JSONResponse(status_code=404, content={"error": "frontend not built"})
 
+# ========== 定时任务初始化 ==========
+from src.scheduler import DailyScheduler
+
+# 创建定时任务实例
+_scheduler = DailyScheduler(hour=8, minute=0)
+
+@app.on_event("startup")
+async def startup_event():
+    """服务启动时初始化定时任务"""
+    print("🔧 正在初始化定时任务...")
+    storage = HotStorage()
+    llm_config = {
+        "model": "deepseek-chat",
+        "api_key": os.getenv("DEEPSEEK_API_KEY", "")
+    }
+    _scheduler.start(storage=storage, llm_config=llm_config)
+    print("✅ 定时任务初始化完成")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """服务关闭时停止定时任务"""
+    print("🛑 正在停止定时任务...")
+    _scheduler.stop()
+    print("✅ 定时任务已停止")
+
 if __name__ == "__main__":
     import uvicorn
     import sys
